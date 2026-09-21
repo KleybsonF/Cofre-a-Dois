@@ -6,6 +6,7 @@ import InviteGenerator from "@/components/InviteGenerator";
 import TransactionModal from "@/components/TransactionModal";
 import CreateGoalModal from "@/components/CreateGoalModal";
 import CreateBoxModal from "@/components/CreateBoxModal";
+import WealthEvolutionModal from "@/components/WealthEvolutionModal";
 
 export default function DashboardClient({
   user1,
@@ -243,58 +244,11 @@ export default function DashboardClient({
         </div>
       )}
 
-      {/* Modal de Resumo do Casal */}
-      {isModalOpen && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, width: "100%", height: "100%", 
-          background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
-          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100
-        }}>
-          <div className="glass-panel" style={{ width: "100%", maxWidth: "500px", padding: "32px", position: "relative" }}>
-            <button 
-              onClick={() => setIsModalOpen(false)} 
-              style={{ position: "absolute", top: "16px", right: "16px", background: "none", border: "none", color: "var(--text-main)", cursor: "pointer" }}
-            >
-              <X size={24} />
-            </button>
-            
-            <div style={{ textAlign: "center", marginBottom: "24px" }}>
-              <Heart size={48} color="#ef4444" fill="#ef4444" style={{ margin: "0 auto 16px" }} />
-              <h2>Nosso Resumo</h2>
-              <p style={{ fontSize: "1.5rem", fontWeight: "bold", margin: "8px 0" }}>
-                {formatCurrency(totalCouple)}
-                {globalTargetAmount > 0 && ` / ${formatCurrency(globalTargetAmount)}`}
-              </p>
-              {globalTargetAmount > 0 && (
-                <p style={{ color: "var(--text-secondary)" }}>{progressPercent.toFixed(1)}% concluído</p>
-              )}
-            </div>
-
-            <hr style={{ borderColor: "var(--card-border)", margin: "24px 0" }} />
-
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px" }}>
-              <div style={{ textAlign: "center" }}>
-                <p style={{ fontWeight: "bold" }}>{user1?.name}</p>
-                <p style={{ color: user1?.primary_color || 'var(--user1-color)' }}>{formatCurrency(totalUser1)}</p>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  {totalCouple > 0 ? ((totalUser1 / totalCouple) * 100).toFixed(1) : 0}%
-                </p>
-              </div>
-              <div style={{ textAlign: "center" }}>
-                <p style={{ fontWeight: "bold" }}>{user2?.name}</p>
-                <p style={{ color: user2?.primary_color || 'var(--user2-color)' }}>{formatCurrency(totalUser2)}</p>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  {totalCouple > 0 ? ((totalUser2 / totalCouple) * 100).toFixed(1) : 0}%
-                </p>
-              </div>
-            </div>
-
-            <button className="btn-secondary" style={{ width: "100%" }} onClick={() => setIsModalOpen(false)}>
-              Fechar Detalhes
-            </button>
-          </div>
-        </div>
-      )}
+      <WealthEvolutionModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        goals={goals} 
+      />
 
       {/* Modal de Transação */}
       <TransactionModal 

@@ -263,9 +263,9 @@ export default function DashboardClient({
               <h2>Nosso Resumo</h2>
               <p style={{ fontSize: "1.5rem", fontWeight: "bold", margin: "8px 0" }}>
                 {formatCurrency(totalCouple)}
-                {mainGoal?.target_amount > 0 && ` / ${formatCurrency(mainGoal.target_amount)}`}
+                {globalTargetAmount > 0 && ` / ${formatCurrency(globalTargetAmount)}`}
               </p>
-              {mainGoal?.target_amount > 0 && (
+              {globalTargetAmount > 0 && (
                 <p style={{ color: "var(--text-secondary)" }}>{progressPercent.toFixed(1)}% concluído</p>
               )}
             </div>

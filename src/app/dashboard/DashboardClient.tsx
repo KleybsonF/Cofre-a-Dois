@@ -61,7 +61,7 @@ export default function DashboardClient({
         
         {/* Lado Esquerdo - User 1 */}
         <div className="glass-panel" style={{ padding: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "24px", borderTop: `4px solid ${user1?.primary_color || 'var(--user1-color)'}` }}>
-          <div style={{ width: "80px", height: "80px", borderRadius: "50%", overflow: "hidden", backgroundColor: user1?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
+          <div style={{ width: "100px", height: "100px", borderRadius: "50%", overflow: "hidden", backgroundColor: user1?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
             {user1?.avatar ? (
               <img src={user1.avatar} alt={user1.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
@@ -69,8 +69,8 @@ export default function DashboardClient({
             )}
           </div>
           <div style={{ textAlign: "left" }}>
-            <h3 style={{ fontSize: "1.4rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user1?.name}</h3>
-            <p style={{ fontSize: "2.2rem", fontWeight: "bold", color: user1?.primary_color || 'var(--user1-color)' }}>
+            <h3 style={{ fontSize: "1.6rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user1?.name}</h3>
+            <p style={{ fontSize: "2.8rem", fontWeight: "bold", color: user1?.primary_color || 'var(--user1-color)' }}>
               {formatCurrency(totalUser1)}
             </p>
           </div>
@@ -91,12 +91,12 @@ export default function DashboardClient({
         {user2 ? (
           <div className="glass-panel" style={{ padding: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "24px", borderTop: `4px solid ${user2?.primary_color || 'var(--user2-color)'}` }}>
             <div style={{ textAlign: "right" }}>
-              <h3 style={{ fontSize: "1.4rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user2?.name}</h3>
-              <p style={{ fontSize: "2.2rem", fontWeight: "bold", color: user2?.primary_color || 'var(--user2-color)' }}>
+              <h3 style={{ fontSize: "1.6rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user2?.name}</h3>
+              <p style={{ fontSize: "2.8rem", fontWeight: "bold", color: user2?.primary_color || 'var(--user2-color)' }}>
                 {formatCurrency(totalUser2)}
               </p>
             </div>
-            <div style={{ width: "80px", height: "80px", borderRadius: "50%", overflow: "hidden", backgroundColor: user2?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
+            <div style={{ width: "100px", height: "100px", borderRadius: "50%", overflow: "hidden", backgroundColor: user2?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
               {user2?.avatar ? (
                 <img src={user2.avatar} alt={user2.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (

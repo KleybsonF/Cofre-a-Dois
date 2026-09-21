@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Crown, TrendingUp, TrendingDown, Activity } from "lucide-react";
+import { X, Crown, TrendingUp, TrendingDown, Activity, Calendar, Lock, Clock } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface WealthEvolutionModalProps {
@@ -32,7 +32,7 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
 
   allTransactions.sort((a, b) => new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime());
 
-  // Estatísticas Gamificadas
+  // Estatísticas Gamificadas originais
   let maxDepositUser1 = 0;
   let maxDepositUser2 = 0;
   let maxWithdrawalUser1 = 0;
@@ -40,13 +40,25 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
   let countUser1 = 0;
   let countUser2 = 0;
 
+  // Novas estatísticas
+  let currentMonthDepositUser1 = 0;
+  let currentMonthDepositUser2 = 0;
+  let totalWithdrawalUser1 = 0;
+  let totalWithdrawalUser2 = 0;
+
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
   const monthlyData: Record<string, { u1: number, u2: number }> = {};
   let cumU1 = 0;
   let cumU2 = 0;
 
+  let lastToDepositUser: any = null;
+
   allTransactions.forEach(t => {
     const date = new Date(t.transaction_date);
     const monthYear = date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '');
+    const isCurrentMonth = date.getMonth() === currentMonth && date.getFullYear() === currentYear;
     
     const isUser1 = t.user_id === user1?.id;
     const isUser2 = t.user_id === user2?.id;
@@ -58,18 +70,24 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
       if (isUser1) {
         cumU1 += t.amount;
         if (t.amount > maxDepositUser1) maxDepositUser1 = t.amount;
+        if (isCurrentMonth) currentMonthDepositUser1 += t.amount;
+        lastToDepositUser = user1;
       }
       if (isUser2) {
         cumU2 += t.amount;
         if (t.amount > maxDepositUser2) maxDepositUser2 = t.amount;
+        if (isCurrentMonth) currentMonthDepositUser2 += t.amount;
+        lastToDepositUser = user2;
       }
     } else if (t.type === 'WITHDRAWAL') {
       if (isUser1) {
         cumU1 -= t.amount;
+        totalWithdrawalUser1 += t.amount;
         if (t.amount > maxWithdrawalUser1) maxWithdrawalUser1 = t.amount;
       }
       if (isUser2) {
         cumU2 -= t.amount;
+        totalWithdrawalUser2 += t.amount;
         if (t.amount > maxWithdrawalUser2) maxWithdrawalUser2 = t.amount;
       }
     }
@@ -103,6 +121,9 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
   const biggestDepositor = maxDepositUser1 > maxDepositUser2 ? user1 : maxDepositUser2 > maxDepositUser1 ? user2 : null;
   const biggestSpender = maxWithdrawalUser1 > maxWithdrawalUser2 ? user1 : maxWithdrawalUser2 > maxWithdrawalUser1 ? user2 : null;
   const mostActive = countUser1 > countUser2 ? user1 : countUser2 > countUser1 ? user2 : null;
+  
+  const monthMVP = currentMonthDepositUser1 > currentMonthDepositUser2 ? user1 : currentMonthDepositUser2 > currentMonthDepositUser1 ? user2 : null;
+  const stingyUser = totalWithdrawalUser1 < totalWithdrawalUser2 ? user1 : totalWithdrawalUser2 < totalWithdrawalUser1 ? user2 : null;
 
   // Barra de Batalha (1v1)
   const totalBoth = totalUser1 + totalUser2;
@@ -194,6 +215,8 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
 
           {/* ESTATÍSTICAS (CARDS) */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+            
+            {/* Maior Aporte Único */}
             <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
               <TrendingUp size={32} color="#10b981" style={{ marginBottom: "12px" }} />
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Maior Aporte Único</p>
@@ -202,9 +225,23 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
                   <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: biggestDepositor.primary_color }}>{biggestDepositor.name}</h4>
                   <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{formatCurrency(biggestDepositor.id === user1?.id ? maxDepositUser1 : maxDepositUser2)}</p>
                 </>
-              ) : <p>Empate</p>}
+              ) : <p style={{ color: "var(--text-secondary)" }}>Nenhum depósito</p>}
             </div>
 
+            {/* Destaque do Mês */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "2px", background: "linear-gradient(90deg, #fbbf24, #f59e0b)" }} />
+              <Calendar size={32} color="#fbbf24" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Destaque do Mês (Acelerado)</p>
+              {monthMVP ? (
+                <>
+                  <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: monthMVP.primary_color }}>{monthMVP.name}</h4>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{formatCurrency(monthMVP.id === user1?.id ? currentMonthDepositUser1 : currentMonthDepositUser2)}</p>
+                </>
+              ) : <p style={{ color: "var(--text-secondary)" }}>Nenhum depósito no mês</p>}
+            </div>
+
+            {/* Formiga Trabalhadora */}
             <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
               <Activity size={32} color="#3b82f6" style={{ marginBottom: "12px" }} />
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Formiga Trabalhadora</p>
@@ -213,12 +250,37 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
                   <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: mostActive.primary_color }}>{mostActive.name}</h4>
                   <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{mostActive.id === user1?.id ? countUser1 : countUser2} transações</p>
                 </>
-              ) : <p>Empate</p>}
+              ) : <p style={{ color: "var(--text-secondary)" }}>Sem transações</p>}
             </div>
 
+            {/* Último a Guardar */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+              <Clock size={32} color="#a855f7" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>O Último a Guardar</p>
+              {lastToDepositUser ? (
+                <>
+                  <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: lastToDepositUser.primary_color }}>{lastToDepositUser.name}</h4>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "var(--text-secondary)" }}>foi a última pessoa</p>
+                </>
+              ) : <p style={{ color: "var(--text-secondary)" }}>Nenhum depósito</p>}
+            </div>
+
+            {/* Mão de Vaca */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+              <Lock size={32} color="#f97316" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Mão de Vaca (Saca menos)</p>
+              {stingyUser ? (
+                <>
+                  <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: stingyUser.primary_color }}>{stingyUser.name}</h4>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{formatCurrency(stingyUser.id === user1?.id ? totalWithdrawalUser1 : totalWithdrawalUser2)} sacados</p>
+                </>
+              ) : <p style={{ color: "var(--text-secondary)" }}>Nenhum saque ainda</p>}
+            </div>
+
+            {/* Mão Aberta */}
             <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
               <TrendingDown size={32} color="#ef4444" style={{ marginBottom: "12px" }} />
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Mão Aberta (Saca mais)</p>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Mão Aberta (Maior Saque)</p>
               {biggestSpender ? (
                 <>
                   <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: biggestSpender.primary_color }}>{biggestSpender.name}</h4>
@@ -226,6 +288,7 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
                 </>
               ) : <p style={{ color: "var(--text-secondary)" }}>Nenhum saque ainda</p>}
             </div>
+
           </div>
 
           {/* GRÁFICO DUPLO */}

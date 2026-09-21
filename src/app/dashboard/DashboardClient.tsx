@@ -266,6 +266,10 @@ export default function DashboardClient({
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         goals={goals} 
+        user1={user1}
+        user2={user2}
+        totalUser1={totalUser1}
+        totalUser2={totalUser2}
       />
 
       {/* Modal de Transação */}

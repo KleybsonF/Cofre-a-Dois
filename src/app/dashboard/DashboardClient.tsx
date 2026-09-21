@@ -60,11 +60,20 @@ export default function DashboardClient({
       <div className="dashboard-grid">
         
         {/* Lado Esquerdo - User 1 */}
-        <div className="glass-panel" style={{ padding: "32px", textAlign: "center", borderTop: `4px solid ${user1?.primary_color || 'var(--user1-color)'}` }}>
-          <h3 style={{ fontSize: "1.5rem", marginBottom: "8px" }}>{user1?.name}</h3>
-          <p style={{ fontSize: "2rem", fontWeight: "bold", color: user1?.primary_color || 'var(--user1-color)' }}>
-            {formatCurrency(totalUser1)}
-          </p>
+        <div className="glass-panel" style={{ padding: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", borderTop: `4px solid ${user1?.primary_color || 'var(--user1-color)'}` }}>
+          <div style={{ width: "64px", height: "64px", borderRadius: "50%", overflow: "hidden", backgroundColor: user1?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
+            {user1?.avatar ? (
+              <img src={user1.avatar} alt={user1.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              user1?.name?.charAt(0).toUpperCase()
+            )}
+          </div>
+          <div style={{ textAlign: "left" }}>
+            <h3 style={{ fontSize: "1.2rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user1?.name}</h3>
+            <p style={{ fontSize: "1.8rem", fontWeight: "bold", color: user1?.primary_color || 'var(--user1-color)' }}>
+              {formatCurrency(totalUser1)}
+            </p>
+          </div>
         </div>
 
         {/* Centro - Coração */}
@@ -78,13 +87,22 @@ export default function DashboardClient({
           </div>
         </div>
 
-      {/* Lado Direito - User 2 */}
+        {/* Lado Direito - User 2 */}
         {user2 ? (
-          <div className="glass-panel" style={{ padding: "32px", textAlign: "center", borderTop: `4px solid ${user2?.primary_color || 'var(--user2-color)'}` }}>
-            <h3 style={{ fontSize: "1.5rem", marginBottom: "8px" }}>{user2?.name}</h3>
-            <p style={{ fontSize: "2rem", fontWeight: "bold", color: user2?.primary_color || 'var(--user2-color)' }}>
-              {formatCurrency(totalUser2)}
-            </p>
+          <div className="glass-panel" style={{ padding: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", borderTop: `4px solid ${user2?.primary_color || 'var(--user2-color)'}` }}>
+            <div style={{ textAlign: "right" }}>
+              <h3 style={{ fontSize: "1.2rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user2?.name}</h3>
+              <p style={{ fontSize: "1.8rem", fontWeight: "bold", color: user2?.primary_color || 'var(--user2-color)' }}>
+                {formatCurrency(totalUser2)}
+              </p>
+            </div>
+            <div style={{ width: "64px", height: "64px", borderRadius: "50%", overflow: "hidden", backgroundColor: user2?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
+              {user2?.avatar ? (
+                <img src={user2.avatar} alt={user2.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                user2?.name?.charAt(0).toUpperCase()
+              )}
+            </div>
           </div>
         ) : (
           <div className="glass-panel" style={{ padding: "32px", textAlign: "center", borderStyle: "dashed", borderColor: "var(--card-border)", borderWidth: "2px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>

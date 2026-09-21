@@ -80,73 +80,82 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals }: WealthE
   return (
     <div style={{
       position: "fixed", top: 0, left: 0, width: "100%", height: "100%", 
-      background: "#0f0f11", // Fundo SÓLIDO e escuro
-      display: "flex", flexDirection: "column", zIndex: 9999
+      background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999
     }}>
-      <div style={{ padding: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <div>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ color: "#ef4444" }}>❤️</span> Evolução do Patrimônio
-          </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "4px" }}>
-            Acompanhe o crescimento financeiro do casal
-          </p>
-        </div>
-        <button 
-          onClick={onClose} 
-          style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "white", padding: "8px", borderRadius: "50%", cursor: "pointer" }}
-        >
-          <X size={24} />
-        </button>
-      </div>
-
-      <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column" }}>
-        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
-          
-          <div style={{ marginBottom: "24px" }}>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>Patrimônio Total Atual</p>
-            <h3 style={{ fontSize: "2rem", color: "white", fontWeight: "bold" }}>
-              {formatCurrency(chartData[chartData.length - 1]?.value || 0)}
-            </h3>
+      <div style={{ 
+        width: "90%", maxWidth: "600px", height: "500px", 
+        background: "#0f0f11", // Fundo SÓLIDO e escuro
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: "24px",
+        display: "flex", flexDirection: "column", position: "relative",
+        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+      }}>
+        <div style={{ padding: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+          <div>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ color: "#ef4444" }}>❤️</span> Evolução do Patrimônio
+            </h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "4px" }}>
+              Acompanhe o crescimento financeiro do casal
+            </p>
           </div>
+          <button 
+            onClick={onClose} 
+            style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "white", padding: "8px", borderRadius: "50%", cursor: "pointer" }}
+          >
+            <X size={24} />
+          </button>
+        </div>
 
-          <div style={{ flex: 1, minHeight: 0 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="rgba(255,255,255,0.5)" 
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
-                  axisLine={false} 
-                  tickLine={false} 
-                  dy={10}
-                />
-                <YAxis 
-                  stroke="rgba(255,255,255,0.5)" 
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
-                  tickFormatter={(val) => `R$ ${(val / 1000).toFixed(0)}k`} 
-                  axisLine={false} 
-                  tickLine={false} 
-                  dx={-10}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#ef4444" 
-                  strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorValue)" 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+        <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column" }}>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
+            
+            <div style={{ marginBottom: "24px" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>Patrimônio Total Atual</p>
+              <h3 style={{ fontSize: "2rem", color: "white", fontWeight: "bold" }}>
+                {formatCurrency(chartData[chartData.length - 1]?.value || 0)}
+              </h3>
+            </div>
+
+            <div style={{ flex: 1, minHeight: 0 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="rgba(255,255,255,0.5)" 
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
+                    axisLine={false} 
+                    tickLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    stroke="rgba(255,255,255,0.5)" 
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
+                    tickFormatter={(val) => `R$ ${(val / 1000).toFixed(0)}k`} 
+                    axisLine={false} 
+                    tickLine={false} 
+                    dx={-10}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#ef4444" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorValue)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>

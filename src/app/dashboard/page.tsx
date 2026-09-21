@@ -16,16 +16,13 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
-  // Buscar casal (se houver mais de um, pegar o que tem o parceiro preenchido)
+  // Buscar casal (prioriza casais completos onde user_2_id não é nulo)
   let couple = await prisma.couple.findFirst({
     where: {
       OR: [
-        { user_1_id: user.id },
+        { user_1_id: user.id, user_2_id: { not: null } },
         { user_2_id: user.id }
       ]
-    },
-    orderBy: {
-      user_2_id: 'desc' // Prioriza casais onde user_2_id não é nulo
     },
     include: {
       user_1: true,
@@ -42,6 +39,30 @@ export default async function DashboardPage() {
       }
     }
   });
+
+  // Se não encontrou casal completo, tenta achar um vazio
+  if (!couple) {
+    couple = await prisma.couple.findFirst({
+      where: {
+        user_1_id: user.id,
+        user_2_id: null
+      },
+      include: {
+        user_1: true,
+        user_2: true,
+        goals: {
+          include: {
+            transactions: true,
+            boxes: {
+              include: {
+                transactions: true
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 
   // Se não tem casal, retornar tela de convite/criar casal
   if (!couple) {

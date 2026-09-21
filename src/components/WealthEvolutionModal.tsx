@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Crown, TrendingUp, TrendingDown, Activity, Calendar, Lock, Clock } from "lucide-react";
+import { X, Crown, TrendingUp, TrendingDown, Activity, Calendar, Lock, Clock, Target, Briefcase, Landmark } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface WealthEvolutionModalProps {
@@ -124,6 +124,52 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
   
   const monthMVP = currentMonthDepositUser1 > currentMonthDepositUser2 ? user1 : currentMonthDepositUser2 > currentMonthDepositUser1 ? user2 : null;
   const stingyUser = totalWithdrawalUser1 < totalWithdrawalUser2 ? user1 : totalWithdrawalUser2 < totalWithdrawalUser1 ? user2 : null;
+  const theBoss = totalUser1 > totalUser2 ? user1 : totalUser2 > totalUser1 ? user2 : null;
+
+  // Lógica para Acionista Majoritário e Ambicioso
+  let maxBalanceInSingleEntityUser1 = 0;
+  let maxBalanceInSingleEntityUser2 = 0;
+  
+  let highestTarget = 0;
+  let ambitiousU1 = 0;
+  let ambitiousU2 = 0;
+
+  goals?.forEach(goal => {
+    // Balanço da Meta Geral
+    let gU1 = 0; let gU2 = 0;
+    goal.transactions?.forEach((t:any) => {
+       if (t.user_id === user1?.id) { if (t.type === 'DEPOSIT') gU1 += t.amount; else gU1 -= t.amount; }
+       if (t.user_id === user2?.id) { if (t.type === 'DEPOSIT') gU2 += t.amount; else gU2 -= t.amount; }
+    });
+    if (gU1 > maxBalanceInSingleEntityUser1) maxBalanceInSingleEntityUser1 = gU1;
+    if (gU2 > maxBalanceInSingleEntityUser2) maxBalanceInSingleEntityUser2 = gU2;
+
+    if (goal.target_amount > highestTarget) {
+      highestTarget = goal.target_amount;
+      ambitiousU1 = gU1; // simplificando pra usar o balanço atual em vez de só deposito
+      ambitiousU2 = gU2;
+    }
+
+    // Balanço das Caixinhas Individuais
+    goal.boxes?.forEach((b:any) => {
+       let bU1 = 0; let bU2 = 0;
+       b.transactions?.forEach((t:any) => {
+         if (t.user_id === user1?.id) { if (t.type === 'DEPOSIT') bU1 += t.amount; else bU1 -= t.amount; }
+         if (t.user_id === user2?.id) { if (t.type === 'DEPOSIT') bU2 += t.amount; else bU2 -= t.amount; }
+       });
+       if (bU1 > maxBalanceInSingleEntityUser1) maxBalanceInSingleEntityUser1 = bU1;
+       if (bU2 > maxBalanceInSingleEntityUser2) maxBalanceInSingleEntityUser2 = bU2;
+
+       if (b.target_amount > highestTarget) {
+         highestTarget = b.target_amount;
+         ambitiousU1 = bU1;
+         ambitiousU2 = bU2;
+       }
+    });
+  });
+
+  const majorityShareholder = maxBalanceInSingleEntityUser1 > maxBalanceInSingleEntityUser2 ? user1 : maxBalanceInSingleEntityUser2 > maxBalanceInSingleEntityUser1 ? user2 : null;
+  const ambitiousUser = ambitiousU1 > ambitiousU2 ? user1 : ambitiousU2 > ambitiousU1 ? user2 : null;
 
   // Barra de Batalha (1v1)
   const totalBoth = totalUser1 + totalUser2;
@@ -215,6 +261,43 @@ export default function WealthEvolutionModal({ isOpen, onClose, goals, user1, us
 
           {/* ESTATÍSTICAS (CARDS) */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+            
+            {/* O Patrão */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "2px", background: "linear-gradient(90deg, #10b981, #059669)" }} />
+              <Briefcase size={32} color="#10b981" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>O Patrão (Maior Saldo)</p>
+              {theBoss ? (
+                <>
+                  <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: theBoss.primary_color }}>{theBoss.name}</h4>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{formatCurrency(theBoss.id === user1?.id ? totalUser1 : totalUser2)} no total</p>
+                </>
+              ) : <p style={{ color: "var(--text-secondary)" }}>Empate de saldos</p>}
+            </div>
+
+            {/* Acionista Majoritário */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+              <Landmark size={32} color="#3b82f6" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Acionista Majoritário</p>
+              {majorityShareholder ? (
+                <>
+                  <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: majorityShareholder.primary_color }}>{majorityShareholder.name}</h4>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{formatCurrency(majorityShareholder.id === user1?.id ? maxBalanceInSingleEntityUser1 : maxBalanceInSingleEntityUser2)} em 1 caixa</p>
+                </>
+              ) : <p style={{ color: "var(--text-secondary)" }}>Sem fundos</p>}
+            </div>
+
+            {/* O Ambicioso */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+              <Target size={32} color="#f43f5e" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>O Ambicioso</p>
+              {ambitiousUser ? (
+                <>
+                  <h4 style={{ fontSize: "1.2rem", fontWeight: "bold", color: ambitiousUser.primary_color }}>{ambitiousUser.name}</h4>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "var(--text-secondary)" }}>focou no alvo de {formatCurrency(highestTarget)}</p>
+                </>
+              ) : <p style={{ color: "var(--text-secondary)" }}>Nenhuma meta com alvo</p>}
+            </div>
             
             {/* Maior Aporte Único */}
             <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>

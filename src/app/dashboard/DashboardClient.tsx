@@ -60,8 +60,8 @@ export default function DashboardClient({
       <div className="dashboard-grid">
         
         {/* Lado Esquerdo - User 1 */}
-        <div className="glass-panel" style={{ justifySelf: "end", minWidth: "350px", padding: "20px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "24px", borderTop: `4px solid ${user1?.primary_color || 'var(--user1-color)'}` }}>
-          <div style={{ width: "100px", height: "100px", borderRadius: "50%", overflow: "hidden", backgroundColor: user1?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
+        <div className="glass-panel" style={{ padding: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", borderTop: `4px solid ${user1?.primary_color || 'var(--user1-color)'}` }}>
+          <div style={{ width: "64px", height: "64px", borderRadius: "50%", overflow: "hidden", backgroundColor: user1?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
             {user1?.avatar ? (
               <img src={user1.avatar} alt={user1.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
@@ -69,8 +69,8 @@ export default function DashboardClient({
             )}
           </div>
           <div style={{ textAlign: "left" }}>
-            <h3 style={{ fontSize: "1.6rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user1?.name}</h3>
-            <p style={{ fontSize: "2.8rem", fontWeight: "bold", color: user1?.primary_color || 'var(--user1-color)' }}>
+            <h3 style={{ fontSize: "1.2rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user1?.name}</h3>
+            <p style={{ fontSize: "1.8rem", fontWeight: "bold", color: user1?.primary_color || 'var(--user1-color)' }}>
               {formatCurrency(totalUser1)}
             </p>
           </div>
@@ -89,14 +89,14 @@ export default function DashboardClient({
 
         {/* Lado Direito - User 2 */}
         {user2 ? (
-          <div className="glass-panel" style={{ justifySelf: "start", minWidth: "350px", padding: "20px 40px", display: "flex", alignItems: "center", justifyContent: "center", gap: "24px", borderTop: `4px solid ${user2?.primary_color || 'var(--user2-color)'}` }}>
+          <div className="glass-panel" style={{ padding: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", borderTop: `4px solid ${user2?.primary_color || 'var(--user2-color)'}` }}>
             <div style={{ textAlign: "right" }}>
-              <h3 style={{ fontSize: "1.6rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user2?.name}</h3>
-              <p style={{ fontSize: "2.8rem", fontWeight: "bold", color: user2?.primary_color || 'var(--user2-color)' }}>
+              <h3 style={{ fontSize: "1.2rem", marginBottom: "4px", color: "var(--text-secondary)" }}>{user2?.name}</h3>
+              <p style={{ fontSize: "1.8rem", fontWeight: "bold", color: user2?.primary_color || 'var(--user2-color)' }}>
                 {formatCurrency(totalUser2)}
               </p>
             </div>
-            <div style={{ width: "100px", height: "100px", borderRadius: "50%", overflow: "hidden", backgroundColor: user2?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
+            <div style={{ width: "64px", height: "64px", borderRadius: "50%", overflow: "hidden", backgroundColor: user2?.primary_color || "var(--card-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "bold", color: "white", flexShrink: 0 }}>
               {user2?.avatar ? (
                 <img src={user2.avatar} alt={user2.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
